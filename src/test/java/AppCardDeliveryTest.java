@@ -1,3 +1,4 @@
+import com.codeborne.selenide.Configuration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -11,6 +12,7 @@ import static java.time.Duration.ofSeconds;
 public class AppCardDeliveryTest {
     @BeforeEach
     void setup() {
+        Configuration.browser = "chrome";
         open("http://localhost:9999");
     }
 
