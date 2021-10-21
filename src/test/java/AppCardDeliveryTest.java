@@ -118,7 +118,7 @@ public class AppCardDeliveryTest {
         $(".input_invalid").shouldBe(appear);
     }
 
-    // Проверка выпадающего списка городов
+    // Проверка выпадающего списка городов 
     @Test
     void showDropDownListAndSelectionOption() {
         $("[class='input__control'][autocomplete='off']").setValue("Мо");
