@@ -134,14 +134,13 @@ public class AppCardDeliveryTest {
 
     }
 
-/*    // Проверка списка даты
+    // Проверка списка даты
     // Проверка кнопок переключения месяца и года
     // Проверка выбора дня
     @Test
     void shouldShowDropDownListDatesAndTheOptionSelect0() {
         $("[class='input__control'][autocomplete='off']").setValue("Краснодар");
         $("span.input__box  button").click();
-        $("[class='calendar calendar_theme_alfa-on-white']").shouldBe(appear, ofSeconds(5));
         $("[ class='calendar__arrow calendar__arrow_direction_right']").click();
         $("[class='calendar__arrow calendar__arrow_direction_right calendar__arrow_double']").click();
         $("[data-day='1668632400000']").click();
@@ -167,6 +166,6 @@ public class AppCardDeliveryTest {
         $(withText("Успешно!")).shouldBe(visible, ofSeconds(11));
 
 
-    }*/
+    }
 
 }
