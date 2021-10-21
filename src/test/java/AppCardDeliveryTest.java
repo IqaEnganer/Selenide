@@ -134,7 +134,7 @@ public class AppCardDeliveryTest {
 
     }
 
-    // Проверка списка даты
+    /*// Проверка списка даты
     // Проверка кнопок переключения месяца и года
     // Проверка выбора дня
     @Test
@@ -166,6 +166,6 @@ public class AppCardDeliveryTest {
         $(withText("Успешно!")).shouldBe(visible, ofSeconds(11));
 
 
-    }
+    }*/
 
 }
