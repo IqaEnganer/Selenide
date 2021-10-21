@@ -1,0 +1,17 @@
+image: Ubuntu
+
+stack: jdk 11
+
+branches:
+  only:
+    - master
+    - selenide
+
+build: off
+
+install:
+  - chmod +x gradlew
+  - app-card-delivery.jar &
+
+build_script:
+  - ./gradlew test --info -Dselenide.headless=true
