@@ -164,6 +164,9 @@ public class AppCardDeliveryTest {
     @Test
     void shouldShowDropDownListDatesAndTheOptionSelect0() {
         $("[class='input__control'][autocomplete='off']").setValue("Краснодар");
+        LocalDate date = LocalDate.now();
+        date = date.plusDays(0);
+        $("[type][placeholder][pattern]").setValue(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         $("span.input__box  button").click();
         $("[class='calendar calendar_theme_alfa-on-white']").shouldBe(visible);
         $("[ class='calendar__arrow calendar__arrow_direction_right']").click();
