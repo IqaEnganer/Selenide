@@ -21,7 +21,6 @@ public class AppCardDeliveryTest {
 
     @BeforeEach
     void setup() {
-        Configuration.headless = true;
         Configuration.browser = "chrome";
         open("http://localhost:9999");
 
@@ -167,12 +166,11 @@ public class AppCardDeliveryTest {
     // Проверка кнопок переключения месяца и года
     // Проверка выбора дня
     @Test
-    void shouldShowDropDownListDatesAndTheOptionSelect0() {
+    void shouldShowDropDownListDatesAndTheOptionSelect0() throws InterruptedException {
         $("[class='input__control'][autocomplete='off']").setValue("Краснодар");
         $("span.input__box  button").click();
         $("[ class='calendar__arrow calendar__arrow_direction_right']").click();
-        $("[class='calendar__arrow calendar__arrow_direction_right calendar__arrow_double']").click();
-        $("[data-day='1668632400000']").click();
+        $("[data-day='1637960400000']").click();
         $("[class='input__control'][name='name']").setValue("Иванов Иван");
         $("[type='tel'][name='phone']").setValue("+79287775566");
         $("[data-test-id='agreement']").click();
