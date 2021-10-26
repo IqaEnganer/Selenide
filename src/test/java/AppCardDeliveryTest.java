@@ -1,6 +1,13 @@
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+
+import java.awt.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 
 import static com.codeborne.selenide.Condition.appear;
 import static com.codeborne.selenide.Condition.visible;
@@ -10,10 +17,14 @@ import static com.codeborne.selenide.Selenide.open;
 import static java.time.Duration.ofSeconds;
 
 public class AppCardDeliveryTest {
+
+
     @BeforeEach
     void setup() {
+        Configuration.headless = true;
         Configuration.browser = "chrome";
         open("http://localhost:9999");
+
     }
 
     // Задержка 10 сек
@@ -21,7 +32,11 @@ public class AppCardDeliveryTest {
     @Test
     void shouldСompleteRegistration() {
         $("[class='input__control'][autocomplete='off']").setValue("Краснодар");
-        $("[type][placeholder][pattern]").setValue("20.12.2021");
+        $("[type][placeholder][pattern]").doubleClick();
+        $("[type][placeholder][pattern]").sendKeys("BACKSPACE");
+        LocalDate date = LocalDate.now();
+        date = date.plusDays(3);
+        $("[type][placeholder][pattern]").setValue(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         $("[class='input__control'][name='name']").setValue("Иванов Иван");
         $("[type='tel'][name='phone']").setValue("+79287775566");
         $("[data-test-id='agreement']").click();
@@ -37,7 +52,9 @@ public class AppCardDeliveryTest {
     @Test
     void shouldMessageAboutInvalidDataWillBeDisplayedInCityField() {
         $("[class='input__control'][type='text']:not([name])").setValue("Сочи");
-        $("[type][placeholder][pattern]").setValue("20.10.2021");
+        LocalDate date = LocalDate.now();
+        date = date.plusDays(3);
+        $("[type][placeholder][pattern]").setValue(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         $("[class='input__control'][name='name']").setValue("Иванов Иван");
         $("[type='tel'][name='phone']").setValue("+79287775566");
         $("[data-test-id='agreement']").click();
@@ -50,7 +67,9 @@ public class AppCardDeliveryTest {
     @Test
     void shouldMessageAboutInvalidDataWillBeDisplayedInNameField() {
         $("[class='input__control'][type='text']:not([name])").setValue("Волгоград");
-        $("[type][placeholder][pattern]").setValue("20.10.2021");
+        LocalDate date = LocalDate.now();
+        date = date.plusDays(3);
+        $("[type][placeholder][pattern]").setValue(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         $("[class='input__control'][name='name']").setValue("Ivan Ivanov");
         $("[type='tel'][name='phone']").setValue("+79287775566");
         $("[data-test-id='agreement']").click();
@@ -63,7 +82,9 @@ public class AppCardDeliveryTest {
     @Test
     void shouldMessageAboutInvalidDataWillBeDisplayedInPhoneNumberField0() {
         $("[class='input__control'][autocomplete='off']").setValue("Краснодар");
-        $("[type][placeholder][pattern]").setValue("20.12.2021");
+        LocalDate date = LocalDate.now();
+        date = date.plusDays(3);
+        $("[type][placeholder][pattern]").setValue(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         $("[class='input__control'][name='name']").setValue("Иванов Иван");
         $("[type='tel'][name='phone']").setValue("+792877755");
         $("[data-test-id='agreement']").click();
@@ -75,7 +96,9 @@ public class AppCardDeliveryTest {
     @Test
     void shouldMessageAboutInvalidDataWillBeDisplayedInPhoneNumberField1() {
         $("[class='input__control'][autocomplete='off']").setValue("Краснодар");
-        $("[type][placeholder][pattern]").setValue("20.12.2021");
+        LocalDate date = LocalDate.now();
+        date = date.plusDays(3);
+        $("[type][placeholder][pattern]").setValue(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         $("[class='input__control'][name='name']").setValue("Иванов Иван");
         $("[data-test-id='agreement']").click();
         $("[class='button__text']").click();
@@ -101,7 +124,9 @@ public class AppCardDeliveryTest {
         $("[class='input__control'][type='text']:not([name])").setValue("Краснодар");
         $("[type][placeholder][pattern]").doubleClick();
         $("[type][placeholder][pattern]").sendKeys("BACKSPACE");
-        $("[type][placeholder][pattern]").setValue("20.10.2021");
+        LocalDate date = LocalDate.now();
+        date = date.minusDays(10);
+        $("[type][placeholder][pattern]").setValue(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         $("[class='input__control'][name='name']").setValue("Иванов Иван");
         $("[type='tel'][name='phone']").setValue("+79287775566");
         $("[data-test-id='agreement']").click();
@@ -113,7 +138,9 @@ public class AppCardDeliveryTest {
     @Test
     void shouldShowTheRequiredItemMessageAsAConsentFlag() {
         $("[class='input__control'][autocomplete='off']").setValue("Краснодар");
-        $("[type][placeholder][pattern]").setValue("20.12.2021");
+        LocalDate date = LocalDate.now();
+        date = date.plusDays(3);
+        $("[type][placeholder][pattern]").setValue(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         $("[class='input__control'][name='name']").setValue("Иванов Иван");
         $("[type='tel'][name='phone']").setValue("+79287775566");
         $("[class='button__text']").click();
@@ -125,7 +152,9 @@ public class AppCardDeliveryTest {
     void showDropDownListAndSelectionOption() {
         $("[class='input__control'][autocomplete='off']").setValue("Мо");
         $(withText("Москва")).click();
-        $("[type][placeholder][pattern]").setValue("20.12.2021");
+        LocalDate date = LocalDate.now();
+        date = date.plusDays(3);
+        $("[type][placeholder][pattern]").setValue(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         $("[class='input__control'][name='name']").setValue("Иванов Иван");
         $("[type='tel'][name='phone']").setValue("+79287775566");
         $("[data-test-id='agreement']").click();
@@ -134,7 +163,7 @@ public class AppCardDeliveryTest {
 
     }
 
-    /*// Проверка списка даты
+    // Проверка списка даты
     // Проверка кнопок переключения месяца и года
     // Проверка выбора дня
     @Test
@@ -158,7 +187,9 @@ public class AppCardDeliveryTest {
     void shouldGetOutDateWeekInAdvance() {
         $("[class='input__control'][autocomplete='off']").setValue("Краснодар");
         $("span.input__box  button").click();
-        $("[data-day='1635368400000']").click();
+        LocalDate date = LocalDate.now();
+        date = date.plusDays(7);
+        $("[type][placeholder][pattern]").setValue(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
         $("[class='input__control'][name='name']").setValue("Иванов Иван");
         $("[type='tel'][name='phone']").setValue("+79287775566");
         $("[data-test-id='agreement']").click();
@@ -166,6 +197,6 @@ public class AppCardDeliveryTest {
         $(withText("Успешно!")).shouldBe(visible, ofSeconds(11));
 
 
-    }*/
+    }
 
 }
