@@ -1,19 +1,14 @@
-import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.Configuration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-
-import java.awt.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-
-import static com.codeborne.selenide.Condition.appear;
-import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.withText;
-import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.open;
+import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.impl.Cleanup.of;
 import static java.time.Duration.ofSeconds;
 
 public class AppCardDeliveryTest {
@@ -21,6 +16,7 @@ public class AppCardDeliveryTest {
 
     @BeforeEach
     void setup() {
+        Configuration.headless = true;
         Configuration.browser = "chrome";
         open("http://localhost:9999");
 
@@ -166,18 +162,12 @@ public class AppCardDeliveryTest {
     // Проверка кнопок переключения месяца и года
     // Проверка выбора дня
     @Test
-    void shouldShowDropDownListDatesAndTheOptionSelect0() throws InterruptedException {
+    void shouldShowDropDownListDatesAndTheOptionSelect0() {
         $("[class='input__control'][autocomplete='off']").setValue("Краснодар");
         $("span.input__box  button").click();
         $("[ class='calendar__arrow calendar__arrow_direction_right']").click();
-        $("[data-day='1637960400000']").click();
-        $("[class='input__control'][name='name']").setValue("Иванов Иван");
-        $("[type='tel'][name='phone']").setValue("+79287775566");
-        $("[data-test-id='agreement']").click();
-        $("[class='button__text']").click();
-        $(withText("Успешно!")).shouldBe(visible, ofSeconds(11));
-
-
+        $("[class='calendar__arrow calendar__arrow_direction_right calendar__arrow_double']").click();
+        $(withText("27")).click();
     }
 
     // Выбор даты на неделю вперед
@@ -197,4 +187,20 @@ public class AppCardDeliveryTest {
 
     }
 
+    // Проверка текста всплывающего окна, на наличие в нем корректной даты на назначенную встречу.
+    @Test
+    void ShouldDatesMeetingMustMatchDateEnteredInputFieldForm() {
+        $("[class='input__control'][autocomplete='off']").setValue("Краснодар");
+        $("[type][placeholder][pattern]").doubleClick();
+        $("[type][placeholder][pattern]").sendKeys("BACKSPACE");
+        LocalDate date = LocalDate.now();
+        date = date.plusDays(4);
+        $("[type][placeholder][pattern]").setValue(date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")));
+        $("[class='input__control'][name='name']").setValue("Иванов Иван");
+        $("[type='tel'][name='phone']").setValue("+79287775566");
+        $("[data-test-id='agreement']").click();
+        $("[class='button__text']").click();
+        sleep(11000);
+        $("[class='notification__content']").shouldHave(exactText("Встреча успешно забронирована на " + date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))));
+    }
 }
