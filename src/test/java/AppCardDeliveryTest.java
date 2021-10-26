@@ -165,6 +165,7 @@ public class AppCardDeliveryTest {
     void shouldShowDropDownListDatesAndTheOptionSelect0() {
         $("[class='input__control'][autocomplete='off']").setValue("Краснодар");
         $("span.input__box  button").click();
+        $("[class='calendar calendar_theme_alfa-on-white']").shouldBe(visible);
         $("[ class='calendar__arrow calendar__arrow_direction_right']").click();
         $("[class='calendar__arrow calendar__arrow_direction_right calendar__arrow_double']").click();
         $(withText("27")).click();
