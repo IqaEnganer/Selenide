@@ -26,7 +26,7 @@ public class AppCardDeliveryTest {
 
     @BeforeEach
     void setup() {
-        //Configuration.headless = true;
+        Configuration.headless = true;
         Configuration.browser = "chrome";
         open("http://localhost:9999");
 
