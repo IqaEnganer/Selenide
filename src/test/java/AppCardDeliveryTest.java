@@ -26,8 +26,7 @@ public class AppCardDeliveryTest {
 
     @BeforeEach
     void setup() {
-        Configuration.headless = true;
-        Configuration.browser = "chrome";
+        //Configuration.headless = true;
         open("http://localhost:9999");
 
     }
@@ -194,28 +193,17 @@ public class AppCardDeliveryTest {
         // клик по дню в календаре
         $("[class='calendar__arrow calendar__arrow_direction_right']").click();
         $(withText("27")).click();
+        $("[data-test-id='date'] .input__control").doubleClick();
+        $("[data-test-id='date'] .input__control").sendKeys("BACKSPACE");
+        // Ввод значений текущая дата +7
+        // Проверка возможности выбора даты на неделю вперед
+        $("[type][placeholder][pattern]").setValue(generationDatePlusDay(7));
         $("[data-test-id='agreement']").click();
         $("[class='button__text']").click();
         $(withText("Успешно!")).shouldBe(visible, ofSeconds(11));
-        $("[class='notification__content']").shouldHave(text("Встреча успешно забронирована на"));
-
-    }
-
-
-    // Выбор даты на неделю вперед
-    @Test
-    void shouldGetOutDateWeekInAdvance() {
-        $("[data-test-id=city] .input__control").setValue("Краснодар");
-        $("[data-test-id='date'] .input__control").doubleClick();
-        $("[data-test-id='date'] .input__control").sendKeys("BACKSPACE");
-        $("[data-test-id='date'] .input__control").setValue(generationDatePlusDay(7));
-        $("[data-test-id='name'] .input__control").setValue("Иванов Иван");
-        $("[data-test-id='phone'] .input__control").setValue("+79287775566");
-        $("[data-test-id='agreement'] .checkbox__box").click();
-        $("[class='button button_view_extra button_size_m button_theme_alfa-on-white']").click();
-        $(withText("Успешно!")).shouldBe(visible, ofSeconds(11));
         $("[class='notification__content']").shouldHave(text("Встреча успешно забронирована на " + generationDatePlusDay(7)));
 
-
     }
+
+
 }
