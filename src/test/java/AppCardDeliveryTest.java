@@ -3,7 +3,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.time.Month;
 import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.*;
@@ -20,16 +22,21 @@ public class AppCardDeliveryTest {
         return LocalDate.now().minusDays(days).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 
+    public LocalDate getDateOfMeetingInLocalDate(int days) {
+        return LocalDate.now().plusDays(days);
+    }
+
     public String plusDay = generationDatePlusDay(3);
     public String minusDay = generationDateMinusDay(3);
 
 
     @BeforeEach
     void setup() {
-        //Configuration.headless = true;
+        Configuration.headless = true;
         open("http://localhost:9999");
 
     }
+
 
     // Задержка 10 сек
     // Все поля корректно заполнены.
@@ -166,44 +173,61 @@ public class AppCardDeliveryTest {
         $("[class='notification__content']").shouldHave(text("Встреча успешно забронирована на " + plusDay));
     }
 
-    // Проверка списка даты
-    // Проверка кнопок переключения месяца и года
-    // Проверка выбора дня
+
+    public String getMonthOfMeetingInRussian(String monthStrInEnglish) {
+        String[] engMonths = {
+                "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
+                "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"};
+        String[] ruMonths = {
+                "Январь ", "Февраль ", "Март ", "Апрель ", "Май ", "Июнь ",
+                "Июль ", "Август ", "Сентябрь ", "Октябрь ", "Ноябрь ", "Декабрь "};
+        for (
+                int t = 0;
+                t < engMonths.length; t++) {
+            if (monthStrInEnglish.contains(engMonths[t])) {
+                monthStrInEnglish = monthStrInEnglish.replace(engMonths[t], ruMonths[t]);
+                break;
+            }
+        }
+        String monthOfMeetingInRussian = monthStrInEnglish;
+        return monthOfMeetingInRussian;
+    }
+
+
     @Test
     void shouldShowDropDownListDatesAndTheOptionSelect0() {
         $("[data-test-id='name'] .input__control").setValue("Иванов Иван");
         $("[data-test-id='phone'] .input__control").setValue("+79287775566");
         $("[data-test-id=city] .input__control").setValue("Волгоград");
-        // Чтобы выбор даты происходил от текущей
-        $("[data-test-id='date'] .input__control").doubleClick();
-        $("[data-test-id='date'] .input__control").sendKeys("BACKSPACE");
-        $("[type][placeholder][pattern]").setValue(generationDatePlusDay(0));
-        // Клик по таблице для выбора даты встречи
-        $("span.input__box  button").click();
-        // Проверка, что окно стало видимым
-        $("[class='calendar calendar_theme_alfa-on-white']").shouldBe(visible);
-        // Клик по кнопке переключения месяца вперед
-        $("[class='calendar__arrow calendar__arrow_direction_right']").click();
-        // Клик по кнопке переключения месяца назад
-        $("[class='calendar__arrow calendar__arrow_direction_left']").click();
-        // Клик по кнопке переключения года вперед
-        $("[class='calendar__arrow calendar__arrow_direction_right calendar__arrow_double']").click();
-        // Клик по кнопке переключения года назад
-        $("[class='calendar__arrow calendar__arrow_direction_left calendar__arrow_double']").click();
-        // клик по дню в календаре
-        $("[class='calendar__arrow calendar__arrow_direction_right']").click();
-        $(withText("27")).click();
-        $("[data-test-id='date'] .input__control").doubleClick();
-        $("[data-test-id='date'] .input__control").sendKeys("BACKSPACE");
-        // Ввод значений текущая дата +7
-        // Проверка возможности выбора даты на неделю вперед
-        $("[type][placeholder][pattern]").setValue(generationDatePlusDay(7));
-        $("[data-test-id='agreement']").click();
-        $("[class='button__text']").click();
+        // Получение дня встречи и перевод в String
+        Integer dayOfMeeting = getDateOfMeetingInLocalDate(29).getDayOfMonth();
+        String dayOfMeetingStr = String.valueOf(dayOfMeeting);
+        // Получение месяца встречи и перевод в String
+        Month monthOfMeeting = getDateOfMeetingInLocalDate(30).getMonth();
+        String monthStr = monthOfMeeting.toString();
+        // Перевод месяца встречи на руссккий язык
+        String monthStrInRussian = getMonthOfMeetingInRussian(monthStr);
+        // Получение года встречи и перевод в String
+        Integer year = getDateOfMeetingInLocalDate(7).getYear();
+        String yearStr = String.valueOf(year);
+        // Нажать на календарь
+        $("[data-test-id=date]").click();
+        // Убедиться, что календарь виден и предлагает текущий месяц
+        $(".calendar__name").shouldBe(visible).shouldHave(exactText(monthStrInRussian + yearStr));
+        // Кликнуть конкретный день
+        Month currentMonth = LocalDate.now().getMonth();
+        if (currentMonth == monthOfMeeting) {
+            $$(".calendar__day").findBy(text(dayOfMeetingStr)).click();
+        } else {
+            $("[class='calendar__arrow calendar__arrow_direction_right']").click();
+            $$(".calendar__day").findBy(text(dayOfMeetingStr)).click();
+        }
+        $("[data-test-id='agreement'] .checkbox__box").click();
+        $("[class='button button_view_extra button_size_m button_theme_alfa-on-white']").click();
         $(withText("Успешно!")).shouldBe(visible, ofSeconds(11));
-        $("[class='notification__content']").shouldHave(text("Встреча успешно забронирована на " + generationDatePlusDay(7)));
+        $("div.notification__content").shouldHave(exactText("Встреча успешно забронирована на " + getMonthOfMeetingInRussian("ru")));
+
 
     }
-
 
 }
