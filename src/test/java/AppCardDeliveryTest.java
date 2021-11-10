@@ -175,28 +175,34 @@ public class AppCardDeliveryTest {
     }
 
 
-
-
     @Test
     void shouldShowDropDownListDatesAndTheOptionSelect0() {
         $("[data-test-id='name'] .input__control").setValue("Иванов Иван");
         $("[data-test-id='phone'] .input__control").setValue("+79287775566");
         $("[data-test-id=city] .input__control").setValue("Волгоград");
+        // Создание переменной в которой хранится количество дней
         int daysToAdd = 7;
+        // Создание переменной для месяца и получение номера месяца
         int defaultMonth = LocalDate.now().plusDays(3).getMonthValue();
+        // Создание переменной для планируемого месяца. Получение месяца  (+ daysToAdd дней от текущей даты).
         int planningDateMonth = LocalDate.now().plusDays(daysToAdd).getMonthValue();
+        // Создание переменной для перевода планируемого дня в стринг (+ daysToAdd от текущей даты) и его получения
         String dayOfPlanningDate = String.valueOf(LocalDate.now().plusDays(daysToAdd).getDayOfMonth());
+        // Создание переменной стринг для планируемой даты (+daysToAdd от текущей) и установка формата
         String planningDate = LocalDate.now().plusDays(daysToAdd).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        // Если дефолтный месяц отличается от планируемого, то нажать на кнопку переключения месяца
         $("[data-test-id=date]").click();
         if (!(defaultMonth == planningDateMonth)) {
             $("[class='calendar__arrow calendar__arrow_direction_right']").click();
         }
+        // Найти селектор в котором будет текст назначенный в переменной (dayOfPlanningDate) и кликнуть
         $$("td.calendar__day").find(exactText(dayOfPlanningDate)).click();
         $("[data-test-id='agreement'] .checkbox__box").click();
         $(".button").click();
         $(withText("Успешно!")).shouldBe(visible, ofSeconds(11));
         $(".notification__content")
-                .shouldBe(visible, Duration.ofSeconds(15))
+                .shouldBe(visible, Duration.ofSeconds(12))
                 .shouldHave(exactText("Встреча успешно забронирована на " + planningDate));
     }
+
 }
