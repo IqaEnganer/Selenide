@@ -2,6 +2,7 @@ import com.codeborne.selenide.Configuration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
@@ -32,7 +33,7 @@ public class AppCardDeliveryTest {
 
     @BeforeEach
     void setup() {
-        Configuration.headless = true;
+        //Configuration.headless = true;
         open("http://localhost:9999");
 
     }
@@ -174,24 +175,6 @@ public class AppCardDeliveryTest {
     }
 
 
-    public String getMonthOfMeetingInRussian(String monthStrInEnglish) {
-        String[] engMonths = {
-                "JANUARY", "FEBRUARY", "MARCH", "APRIL", "MAY", "JUNE",
-                "JULY", "AUGUST", "SEPTEMBER", "OCTOBER", "NOVEMBER", "DECEMBER"};
-        String[] ruMonths = {
-                "Январь ", "Февраль ", "Март ", "Апрель ", "Май ", "Июнь ",
-                "Июль ", "Август ", "Сентябрь ", "Октябрь ", "Ноябрь ", "Декабрь "};
-        for (
-                int t = 0;
-                t < engMonths.length; t++) {
-            if (monthStrInEnglish.contains(engMonths[t])) {
-                monthStrInEnglish = monthStrInEnglish.replace(engMonths[t], ruMonths[t]);
-                break;
-            }
-        }
-        String monthOfMeetingInRussian = monthStrInEnglish;
-        return monthOfMeetingInRussian;
-    }
 
 
     @Test
@@ -199,35 +182,21 @@ public class AppCardDeliveryTest {
         $("[data-test-id='name'] .input__control").setValue("Иванов Иван");
         $("[data-test-id='phone'] .input__control").setValue("+79287775566");
         $("[data-test-id=city] .input__control").setValue("Волгоград");
-        // Получение дня встречи и перевод в String
-        Integer dayOfMeeting = getDateOfMeetingInLocalDate(29).getDayOfMonth();
-        String dayOfMeetingStr = String.valueOf(dayOfMeeting);
-        // Получение месяца встречи и перевод в String
-        Month monthOfMeeting = getDateOfMeetingInLocalDate(30).getMonth();
-        String monthStr = monthOfMeeting.toString();
-        // Перевод месяца встречи на руссккий язык
-        String monthStrInRussian = getMonthOfMeetingInRussian(monthStr);
-        // Получение года встречи и перевод в String
-        Integer year = getDateOfMeetingInLocalDate(7).getYear();
-        String yearStr = String.valueOf(year);
-        // Нажать на календарь
+        int daysToAdd = 7;
+        int defaultMonth = LocalDate.now().plusDays(3).getMonthValue();
+        int planningDateMonth = LocalDate.now().plusDays(daysToAdd).getMonthValue();
+        String dayOfPlanningDate = String.valueOf(LocalDate.now().plusDays(daysToAdd).getDayOfMonth());
+        String planningDate = LocalDate.now().plusDays(daysToAdd).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
         $("[data-test-id=date]").click();
-        // Убедиться, что календарь виден и предлагает текущий месяц
-        $(".calendar__name").shouldBe(visible).shouldHave(exactText(monthStrInRussian + yearStr));
-        // Кликнуть конкретный день
-        Month currentMonth = LocalDate.now().getMonth();
-        if (currentMonth == monthOfMeeting) {
-            $$(".calendar__day").findBy(text(dayOfMeetingStr)).click();
-        } else {
+        if (!(defaultMonth == planningDateMonth)) {
             $("[class='calendar__arrow calendar__arrow_direction_right']").click();
-            $$(".calendar__day").findBy(text(dayOfMeetingStr)).click();
         }
+        $$("td.calendar__day").find(exactText(dayOfPlanningDate)).click();
         $("[data-test-id='agreement'] .checkbox__box").click();
-        $("[class='button button_view_extra button_size_m button_theme_alfa-on-white']").click();
+        $(".button").click();
         $(withText("Успешно!")).shouldBe(visible, ofSeconds(11));
-        $("div.notification__content").shouldHave(exactText("Встреча успешно забронирована на " + getMonthOfMeetingInRussian("ru")));
-
-
+        $(".notification__content")
+                .shouldBe(visible, Duration.ofSeconds(15))
+                .shouldHave(exactText("Встреча успешно забронирована на " + planningDate));
     }
-
 }
