@@ -4,12 +4,10 @@ import org.junit.jupiter.api.Test;
 
 import java.time.Duration;
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.format.DateTimeFormatter;
-import java.util.Locale;
 
 import static com.codeborne.selenide.Condition.*;
-import static com.codeborne.selenide.Selectors.*;
+import static com.codeborne.selenide.Selectors.withText;
 import static com.codeborne.selenide.Selenide.*;
 import static java.time.Duration.ofSeconds;
 
@@ -23,9 +21,6 @@ public class AppCardDeliveryTest {
         return LocalDate.now().minusDays(days).format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 
-    public LocalDate getDateOfMeetingInLocalDate(int days) {
-        return LocalDate.now().plusDays(days);
-    }
 
     public String plusDay = generationDatePlusDay(3);
     public String minusDay = generationDateMinusDay(3);
@@ -33,7 +28,7 @@ public class AppCardDeliveryTest {
 
     @BeforeEach
     void setup() {
-        //Configuration.headless = true;
+        Configuration.headless = true;
         open("http://localhost:9999");
 
     }
